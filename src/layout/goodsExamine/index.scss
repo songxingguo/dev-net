@@ -1,0 +1,18 @@
+.preview-image {
+  .preview-image--item {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+  }
+  .preview-image--mini {
+    width: inherit;
+    border-radius: 6px;
+  }
+}
+.preview-image--ori {
+  width: 100%;
+  border-radius: 6px;
+}
+.editable-row-operations a {
+  margin-right: 8px;
+}

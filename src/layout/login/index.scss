@@ -1,0 +1,32 @@
+.login-container {
+  height: 100vh;
+  background: #f0f2f5;
+  background-image: url(../../assets/images/login-bg.svg);
+  background-repeat: no-repeat;
+  background-position: center 110px;
+  background-size: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.login-content {
+  flex: 1;
+  .login-panel {
+    width: 380px;
+    margin: 0 auto;
+    .login-panel--title {
+      margin-top: 100px;
+      text-align: center;
+      font-size: 36px;
+      font-family: PingFangSC-Regular;
+      font-weight: 400;
+      color: #39395e;
+    }
+    .login-form {
+      margin-top: 68px;
+    }
+    .login-btn {
+      width: 100%;
+    }
+  }
+}
