@@ -2,12 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import Antd from 'ant-design-vue'
 import AV from 'leancloud-storage'
-import { Realtime } from 'leancloud-realtime'
+import {Realtime} from 'leancloud-realtime'
 import 'ant-design-vue/dist/antd.css'
 import './assets/style/base.scss'
-import router from  './router'
+import router from './router'
+import axios from 'axios';
+
 // 初始化存储 SDK
-const { appId, appKey } = {
+const {appId, appKey} = {
   appId: "hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz",
   appKey: "ist6rnuv2KfBpkdEng22uNA0"
 };
@@ -16,6 +18,14 @@ const realtime = new Realtime({
   appId: 'hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz',
   appKey: 'ist6rnuv2KfBpkdEng22uNA0',
 });
+// const {APPID, APPSECRET} = {
+//   APPID: 'wx851ea7878ea99d18',
+//   APPSECRET: '8bda07146426aa95b9995940285e3a81'
+// }
+
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.baseURL = '/api'
+Vue.prototype.$axios = axios
 
 AV.init(appId, appKey);
 Vue.prototype.AV = AV  // 将初始化后的 AV 挂载到 Vue 上
@@ -23,21 +33,21 @@ Vue.prototype.realtime = realtime
 Vue.config.productionTip = false
 Vue.use(Antd)
 
-router.beforeEach((to,from,next) => {
+router.beforeEach((to, from, next) => {
   // 这里的meta就是我们刚刚在路由里面配置的meta
-  if(to.meta.requireAuth){
+  if (to.meta.requireAuth) {
     // 下面这个判断是自行实现到底是否有没有登录
-    if (AV.User.current()){
+    if (AV.User.current()) {
       // 登录就继续
       next();
-    }else {
+    } else {
       // 没有登录跳转到登录页面，登录成功之后再返回到之前请求的页面
       next({
-        path : '/login',
-        query : {redirect : to.fullPath}
+        path: '/login',
+        query: {redirect: to.fullPath}
       })
     }
-  }else {
+  } else {
     // 不需要登录的，可以继续访问
     next()
   }
