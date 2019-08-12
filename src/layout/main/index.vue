@@ -27,6 +27,14 @@
             <router-link to="/isStudentExamine">实名审核</router-link>
           </a-menu-item>
         </a-sub-menu>
+        <a-sub-menu
+                key="sub3"
+        >
+          <span slot="title"><a-icon type="notification" /><span>知晓理工</span></span>
+          <a-menu-item key="5">
+            <router-link to="/sites">地点</router-link>
+          </a-menu-item>
+        </a-sub-menu>
       </a-menu>
     </a-layout-sider>
     <a-layout>
