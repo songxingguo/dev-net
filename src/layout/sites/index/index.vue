@@ -104,23 +104,16 @@
         }
       },
       loadSiteList () {
-        const {APPID, APPSECRET} = {
-          APPID: 'wx851ea7878ea99d18',
-          APPSECRET: '8bda07146426aa95b9995940285e3a81'
-        }
-        this.$axios
-          .get(`/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
-          .then(({data: {access_token}}) => {
-            this.$axios.post(`/tcb/databasequery?access_token=${access_token}`, {
-              "env": "test-ptpuu",
-              "query": "db.collection('sites').limit(10).skip(1).get()"
-            }).then(({data: {data}}) => {
-              if (!data) return
-              this.data = data.map(item => {
-                return JSON.parse(item)
-              })
-            })
+        console.log(this.access_token)
+        this.$axios.post(`/tcb/databasequery?access_token=${this.access_token}`, {
+          "env": "test-ptpuu",
+          "query": "db.collection('sites').limit(10).skip(1).get()"
+        }).then(({data: {data}}) => {
+          if (!data) return
+          this.data = data.map(item => {
+            return JSON.parse(item)
           })
+        })
       },
       create () {
         this.$router.push(`/sites/create`)

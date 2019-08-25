@@ -18,21 +18,30 @@ const realtime = new Realtime({
   appId: 'hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz',
   appKey: 'ist6rnuv2KfBpkdEng22uNA0',
 });
-// const {APPID, APPSECRET} = {
-//   APPID: 'wx851ea7878ea99d18',
-//   APPSECRET: '8bda07146426aa95b9995940285e3a81'
-// }
+// 程序唯一凭证、小程序唯一凭证密钥
+const {APPID, APPSECRET} = {
+  APPID: 'wx851ea7878ea99d18',
+  APPSECRET: '8bda07146426aa95b9995940285e3a81'
+}
 
+// 初始化 axios
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.baseURL = '/api'
 Vue.prototype.$axios = axios
 
+// 获取 access_token
+Vue.prototype.access_token = async () => await axios.get(`/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`).then(({data: {access_token}}) => access_token)
+
+// 初始化 AV
 AV.init(appId, appKey);
 Vue.prototype.AV = AV  // 将初始化后的 AV 挂载到 Vue 上
 Vue.prototype.realtime = realtime
 Vue.config.productionTip = false
+
+// 引入 AntDesign
 Vue.use(Antd)
 
+// 登录验证
 router.beforeEach((to, from, next) => {
   // 这里的meta就是我们刚刚在路由里面配置的meta
   if (to.meta.requireAuth) {
@@ -53,6 +62,7 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+// 绑定路由
 window.$VueRouter = router
 
 new Vue({
