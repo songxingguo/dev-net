@@ -55,7 +55,8 @@
 </style>
 <script>
   import upload from '../../../components/upload'
-
+  import Sites from '../../../model/sites'
+  
   export default {
     data () {
       return {
@@ -118,24 +119,14 @@
     beforeDestroy () {
     },
     methods: {
-      submit () {
-        this.model.desc = this.model.desc.trim().split(/\s+/)
-        const {APPID, APPSECRET} = {
-          APPID: 'wx851ea7878ea99d18',
-          APPSECRET: '8bda07146426aa95b9995940285e3a81'
+      async submit () {
+        try {
+          await Sites.create({"query": `db.collection('sites').add({data: ${JSON.stringify(this.model)}})`})
+          this.$message.success('新增成功！')
+          this.back()
+        } catch (err) {
+          console.error(err)
         }
-        this.$axios
-          .get(`/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
-          .then(({data: {access_token}}) => {
-              this.$axios.post(`/tcb/databaseadd?access_token=${access_token}`, {
-                "env": "test-ptpuu",
-                "query": `db.collection('sites').add({data: ${JSON.stringify(this.model)}})`
-              }).then(() => {
-                this.$message.success('提交成功！')
-                this.back()
-              })
-            }
-          )
       },
       back () {
         setTimeout(() => {
