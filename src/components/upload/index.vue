@@ -1,19 +1,29 @@
 <template>
   <div class="d-upload">
     <a-upload
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            listType="picture-card"
+            :action="fullAction"
+            :accept="accept"
+            :listType="listType"
             :fileList="fileList"
             @preview="handlePreview"
             @change="handleChange"
+            :data="data"
+            :beforeUpload="beforeUpload"
     >
-      <div v-if="fileList.length < 3">
-        <a-icon type="plus" />
-        <div class="ant-upload-text">Upload</div>
-      </div>
+      <template v-if="isPictureCard">
+        <div v-if="fileList.length < size">
+          <a-icon type="plus"/>
+          <div class="ant-upload-text">上传</div>
+        </div>
+      </template>
+      <template v-else>
+        <a-button>
+          <a-icon type="upload" /> 上传
+        </a-button>
+      </template>
     </a-upload>
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-      <img alt="example" style="width: 100%" :src="previewImage" />
+      <img alt="example" style="width: 100%" :src="previewImage"/>
     </a-modal>
   </div>
 </template>
@@ -21,21 +31,46 @@
   @import './index.scss';
 </style>
 <script>
+  import NetConfig from '../../../src/config/net'
+  import {getAuthToken} from '../../../src/utils/api'
+  import Upload from '../../model/upload'
+
   export default {
+    name: 'upload',
+    props: {
+      value: {
+        type: [Array, String],
+        default () {
+          return []
+        }
+      },
+      size: {
+        type: Number,
+        default: 1
+      },
+      listType: {
+        type: String,
+        default: 'picture-card'
+      },
+      accept: {
+        type: String,
+        default: 'jpg,.png,.jpeg'
+      }
+    },
     data () {
       return {
+        fullAction: '',
         previewVisible: false,
         previewImage: '',
-        fileList: [{
-          uid: '-1',
-          name: 'xxx.png',
-          status: 'done',
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
+        access_token: '',
+        fileList: [],
+        innerFileList: [],
+        data: {}
       }
     },
     components: {},
     created () {
+      this.access_token = getAuthToken()
     },
     mounted () {
     },
@@ -49,11 +84,36 @@
         this.previewImage = file.url || file.thumbUrl
         this.previewVisible = true
       },
-      handleChange ({ fileList }) {
+      handleChange ({fileList}) {
+        if (this.$haveDone()) {
+          let inputData = this.innerFileList
+          this.emitInput(inputData)
+        }
         this.fileList = fileList
       },
+      emitInput (value) {
+        this.$emit('input', this.size > 1 ? value : value[0] || '')
+      },
+      $haveDone () {
+        return this.fileList.every(item => item.status === 'done')
+      },
+      async beforeUpload (file) {
+        const data = await Upload.getUrl({"path": `${file.name}`})
+        this.fullAction = `${NetConfig.apiUrlOfCloud}${data.url.split('.com')[1]}`
+        this.data = {
+          'key': file.name,
+          'Signature': data.authorization,
+          'x-cos-security-token': data.token,
+          'x-cos-meta-fileid': data.cos_file_id
+        }
+        this.innerFileList.push(data.file_id)
+      }
     },
-    computed: {},
+    computed: {
+      isPictureCard() {
+        return this.listType === 'picture-card'
+      },
+    },
     watch: {}
   }
 </script>

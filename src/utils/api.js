@@ -14,7 +14,7 @@ export function removeAuthToken () {
   authToken = getAuthToken()
 }
 
-function getAuthToken () {
+export function getAuthToken () {
   return window.localStorage.getItem(TOKEN_NAME)
 }
 

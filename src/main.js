@@ -7,6 +7,7 @@ import 'ant-design-vue/dist/antd.css'
 import './assets/style/base.scss'
 import router from './router'
 import axios from 'axios'
+import VueJsonp from 'vue-jsonp'
 
 const {appId, appKey} = {
   appId: "hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz",
@@ -32,6 +33,9 @@ Vue.config.productionTip = false
 
 // 引入 AntDesign
 Vue.use(Antd)
+
+// 使用 Jsonp
+Vue.use(VueJsonp, 0)
 
 // 登录验证
 router.beforeEach((to, from, next) => {

@@ -22,28 +22,24 @@
             <a-input v-model="model.location"></a-input>
           </a-form-item>
           <a-form-item label="图片">
-            <upload></upload>
+            <upload v-model="model.images" :size="5"></upload>
           </a-form-item>
         </a-col>
       </a-row>
       <a-divider orientation="left">音频</a-divider>
       <a-row :gutter="20">
-        <a-col :span="8">
-          <a-form-item>
-            <a-input placeholder="名称" v-model="model.audio.name"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item>
-            <a-input placeholder="海报" v-model="model.audio.poster"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item>
-            <a-input placeholder="音频" v-model="model.audio.url"></a-input>
+        <a-col :span="12">
+          <a-form-item label="名称">
+            <a-input v-model="model.audio.name"></a-input>
           </a-form-item>
         </a-col>
       </a-row>
+      <a-form-item label="音频">
+        <upload v-model="model.audio.url" listType="text" accept="audio/*"></upload>
+      </a-form-item>
+      <a-form-item label="海报">
+        <upload v-model="model.audio.poster"></upload>
+      </a-form-item>
       <a-button type='primary' :loading="loading" @click="submit">
         提交
       </a-button>
@@ -56,7 +52,7 @@
 <script>
   import upload from '../../../components/upload'
   import Sites from '../../../model/sites'
-  
+
   export default {
     data () {
       return {

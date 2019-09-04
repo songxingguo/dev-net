@@ -15,6 +15,14 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/foo': {
+        target: 'https://cos.ap-shanghai.myqcloud.com',//源地址
+        changeOrigin: true,//是否允许跨域
+        ws: true,//是否代理websockets
+        pathRewrite: {
+          '^/foo': ''
+        }
       }
     }
   }
