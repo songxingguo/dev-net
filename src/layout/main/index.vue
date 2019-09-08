@@ -4,22 +4,23 @@
             collapsible
             v-model="collapsed"
     >
+      <div class="logo">临渊羡鱼，不如退而结网</div>
       <a-menu theme="dark" :defaultSelectedKeys="['1']" mode="inline">
         <a-sub-menu
                 key="sub1"
         >
-          <span slot="title"><a-icon type="user"/><span>管理</span></span>
-          <a-menu-item key="1">
-            <router-link to="/demo">通讯测试</router-link>
-          </a-menu-item>
-          <a-menu-item key="2">
-            <router-link to="/goodsType">类型管理</router-link>
+          <span slot="title"><a-icon type="notification"/><span>知晓理工</span></span>
+          <a-menu-item key="5">
+            <router-link to="/sites">地点</router-link>
           </a-menu-item>
         </a-sub-menu>
         <a-sub-menu
                 key="sub2"
         >
-          <span slot="title"><a-icon type="check-circle" /><span>审核</span></span>
+          <span slot="title"><a-icon type="home"/><span>理工小铺</span></span>
+          <a-menu-item key="2">
+            <router-link to="/goodsType">类型管理</router-link>
+          </a-menu-item>
           <a-menu-item key="3">
             <router-link to="/goodsExamine">物品审核</router-link>
           </a-menu-item>
@@ -30,9 +31,9 @@
         <a-sub-menu
                 key="sub3"
         >
-          <span slot="title"><a-icon type="notification" /><span>知晓理工</span></span>
-          <a-menu-item key="5">
-            <router-link to="/sites">地点</router-link>
+          <span slot="title"><a-icon type="rocket"/><span>实验室</span></span>
+          <a-menu-item key="1">
+            <router-link to="/demo">通讯测试</router-link>
           </a-menu-item>
         </a-sub-menu>
       </a-menu>
@@ -72,9 +73,9 @@
     beforeDestroy () {
     },
     methods: {
-      logOut() {
+      logOut () {
         this.AV.User.logOut();
-        this.$router.push({path:'/login'})
+        this.$router.push({path: '/login'})
       }
     },
     computed: {},
