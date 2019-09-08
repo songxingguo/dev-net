@@ -50,7 +50,7 @@
         </div>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
-        CampusSharing ©2018 Created by Songxingguo
+        DevNet ©2018 Created by Songxingguo
       </a-layout-footer>
     </a-layout>
   </a-layout>
