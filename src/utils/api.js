@@ -63,7 +63,8 @@ export function CreateApi ({baseURL, data}) {
       config.params = {
         'access_token': authToken
       }
-      config.data["env"] = "test-ptpuu"
+      // config.data["env"] = "test-ptpuu"
+      config.data["env"] = "visitingcqut-700544"
     }
     // Do something before request is sent
     return config

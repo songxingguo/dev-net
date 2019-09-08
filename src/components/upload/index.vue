@@ -18,7 +18,8 @@
       </template>
       <template v-else>
         <a-button>
-          <a-icon type="upload" /> 上传
+          <a-icon type="upload"/>
+          上传
         </a-button>
       </template>
     </a-upload>
@@ -64,12 +65,12 @@
         previewImage: '',
         access_token: '',
         fileList: [],
-        innerFileList: [],
+        isFirst: true,
         data: {}
       }
     },
     components: {},
-    created () {
+    async created () {
       this.access_token = getAuthToken()
     },
     mounted () {
@@ -85,20 +86,15 @@
         this.previewVisible = true
       },
       handleChange ({fileList}) {
-        if (this.$haveDone()) {
-          let inputData = this.innerFileList
-          this.emitInput(inputData)
-        }
-        this.fileList = fileList
+        let inputData = fileList.map(item => item.file_id)
+        this.emitInput(inputData)
       },
       emitInput (value) {
         this.$emit('input', this.size > 1 ? value : value[0] || '')
       },
-      $haveDone () {
-        return this.fileList.every(item => item.status === 'done')
-      },
       async beforeUpload (file) {
-        const data = await Upload.getUrl({"path": `${file.name}`})
+        const data = await Upload.getUploadUrl({"path": `${file.name}`})
+        file.file_id = data.file_id
         this.fullAction = `${NetConfig.apiUrlOfCloud}${data.url.split('.com')[1]}`
         this.data = {
           'key': file.name,
@@ -106,14 +102,24 @@
           'x-cos-security-token': data.token,
           'x-cos-meta-fileid': data.cos_file_id
         }
-        this.innerFileList.push(data.file_id)
       }
     },
     computed: {
-      isPictureCard() {
+      isPictureCard () {
         return this.listType === 'picture-card'
-      },
+      }
     },
-    watch: {}
+    watch: {
+      value: {
+        async handler () {
+          const value = this.value
+          if (value.length === 0) return this.fileList = []
+          const fileIds = (typeof value === 'string') ? [value] : value
+          const fileList = await Upload.getDownloadUrl(fileIds)
+          // if (!fileList) return
+          this.fileList = fileList
+        }
+      }
+    }
   }
 </script>

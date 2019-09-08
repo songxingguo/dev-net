@@ -4,22 +4,20 @@
     <a-table
             :columns="columns"
             :dataSource="data"
+            :pagination="pagination"
+            @change="handleChange"
             bordered
-            :rowKey='record => record._id'>
-      <div class="preview-image flex-row flex-space-around" slot="images" slot-scope="url">
-        <a-tooltip placement="right"
-                   overlayClassName="tooltip--image"
-                   :mouseEnterDelay="0.3">
-          <template slot="title">
-            <img class="preview-image--ori"
-                 v-if="url"
-                 :src="url" alt="地点图片"/>
-          </template>
-          <img class="preview-image--item preview-image--mini"
-               v-if="url"
-               :src="url" alt="地点图片"/>
-        </a-tooltip>
-      </div>
+            :rowKey='record => record.id'>
+      <template slot="desc" slot-scope="text">
+        <tooltip :value="text"></tooltip>
+      </template>
+      <template slot="images" slot-scope="record">
+        <preview-image v-for="(item, index) in record" :key="index" :src="item.url"/>
+      </template>
+      <audio slot="audioUrl" slot-scope="text" :src="text" controls="controls" class="audio">
+        您的浏览器不支持 audio 标签。
+      </audio>
+      <preview-image slot="poster" slot-scope="text" :src="text"/>
       <template slot="operation" slot-scope="text, record">
         <div class='editable-row-operations'>
           <a @click="() => edit(record)">编辑</a>
@@ -41,95 +39,96 @@
 </style>
 <script>
   import Sites from '../../../model/sites'
+  import PreviewImage from '../../../components/preview-image/index'
+  import Tooltip from '../../../components/tooltip/index'
 
   const columns = [{
     title: '名称',
-    dataIndex: 'title',
-    width: '10%',
+    dataIndex: 'title'
   }, {
     title: '类型',
     dataIndex: 'type',
-    width: '5%',
+    width: '8%',
   }, {
     title: '描述',
     dataIndex: 'desc',
-    width: '25%',
+    scopedSlots: {customRender: 'desc'},
+    width: '10%',
   }, {
     title: '位置',
     dataIndex: 'position',
-    width: '10%',
   }, {
     title: '经纬度',
-    dataIndex: 'location',
-    width: '10%',
-  }, {
-    title: '音频',
-    dataIndex: 'audio',
-    width: '10%',
+    dataIndex: 'location'
   }, {
     title: '图片',
-    dataIndex: 'url',
-    width: '10%',
+    dataIndex: 'images',
     scopedSlots: {customRender: 'images'},
+    width: '20%',
+  }, {
+    title: '名称',
+    dataIndex: 'audio.name',
+  }, {
+    title: '海报',
+    dataIndex: 'audio.poster.url',
+    scopedSlots: {customRender: 'poster'}
+  }, {
+    title: '音频',
+    dataIndex: 'audio.src.url',
+    scopedSlots: {customRender: 'audioUrl'}
   }, {
     title: '操作',
     dataIndex: 'operation',
-    width: '15%',
+    width: '10%',
     scopedSlots: {customRender: 'operation'},
   }];
   export default {
     data () {
       return {
         data: [],
+        pagination: {},
         columns,
         visible: false,
         record: null,
         info: {}
       }
     },
-    components: {},
+    components: {PreviewImage, Tooltip},
     created () {
     },
     mounted () {
-      this.loadSiteList()
+      this.loadData()
     },
     beforeDestroy () {
     },
     methods: {
-      handleChange (value, key, column) {
-        const newData = [...this.data]
-        const target = newData.filter(item => key === item.key)[0]
-        if (target) {
-          target[column] = value
-          this.data = newData
-        }
+      async handleChange (pagination) {
+        this.pagination = pagination
+        await this.loadData()
       },
-      async loadSiteList () {
-        
+      async loadData () {
         try {
-          const {data} = await Sites.list({
-            "query": "db.collection('sites').limit(10).skip(1).get()"
-          })
+          const {data, pagination} = await Sites.list(this.pagination)
           if (!data) return
-          this.data = data.map(item => {
-            return JSON.parse(item)
-          })
-        }catch (err) {
+          this.data = await data
+          console.log(this.data)
+          this.pagination = pagination
+        } catch (err) {
           console.error(err)
         }
       },
       create () {
         this.$router.push(`/sites/create`)
       },
-      edit ({_id: id}) {
+      edit ({id}) {
         this.$router.push(`/sites/${id}/edit`)
       },
-      async deleteItem ({_id: id}) {
+      async deleteItem ({id}) {
         try {
-          await Sites.delete({"query": `db.collection('sites').doc('${id}').remove()`})
+          await Sites.delete(id)
           this.$message.success('删除成功！')
           this.loadSiteList()
-        }catch (err) {
+        } catch (err) {
           console.error(err)
         }
       }

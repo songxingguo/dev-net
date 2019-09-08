@@ -1,0 +1,17 @@
+.preview-image {
+  display: inline-block;
+  .preview-image--item {
+    cursor: pointer;
+  }
+  .preview-image--mini {
+    width: 75px;
+    border-radius: 6px;
+  }
+  & + .preview-image {
+    margin-left: 8px;
+  }
+}
+.preview-image--ori {
+  width: 100%;
+  border-radius: 6px;
+}

@@ -13,13 +13,14 @@
             </a-select>
           </a-form-item>
           <a-form-item label="描述">
-            <a-input v-model="model.desc"></a-input>
+            <a-textarea v-model="model.desc" :autosize="{minRows:2,maxRows:8}"></a-textarea>
           </a-form-item>
           <a-form-item label="位置">
             <a-input v-model="model.position"></a-input>
           </a-form-item>
           <a-form-item label="经纬度">
             <a-input v-model="model.location"></a-input>
+            <a href="https://lbs.amap.com/console/show/picker" target="_blank">坐标拾取器</a>
           </a-form-item>
           <a-form-item label="图片">
             <upload v-model="model.images" :size="5"></upload>
@@ -35,7 +36,7 @@
         </a-col>
       </a-row>
       <a-form-item label="音频">
-        <upload v-model="model.audio.url" listType="text" accept="audio/*"></upload>
+        <upload v-model="model.audio.src" listType="text" accept="audio/*"></upload>
       </a-form-item>
       <a-form-item label="海报">
         <upload v-model="model.audio.poster"></upload>
@@ -65,7 +66,7 @@
           audio: {
             name: '',
             poster: '',
-            url: ''
+            src: ''
           },
           images: []
         },
@@ -104,20 +105,28 @@
           code: 'service'
         }
         ],
-        loading: false
+        loading: false,
+        siteId: undefined
       }
     },
     components: {upload},
     created () {
+      this.siteId = this.$route.params.id
+      if (!this.siteId) return
+      this.loadEditData(this.siteId)
     },
     mounted () {
     },
     beforeDestroy () {
     },
     methods: {
+      async loadEditData (id) {
+        this.model = await Sites.show(id)
+        console.log(this.model)
+      },
       async submit () {
         try {
-          await Sites.create({"query": `db.collection('sites').add({data: ${JSON.stringify(this.model)}})`})
+          this.isUpdate ? await Sites.edit(this.siteId, this.model) : await Sites.create(this.model)
           this.$message.success('新增成功！')
           this.back()
         } catch (err) {
@@ -128,10 +137,13 @@
         setTimeout(() => {
           this.$router.replace('/sites')
         }, 800)
-      },
+      }
     },
-    computed: {}
-    ,
+    computed: {
+      isUpdate () {
+        return this.siteId !== undefined
+      }
+    },
     watch: {}
   }
 </script>
