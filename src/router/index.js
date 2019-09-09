@@ -8,6 +8,7 @@ import IsStudentExamine from '../layout/isStudentExamine'
 import Sites from '../layout/sites/index/index'
 import SiteCreate from '../layout/sites/create/index'
 import Login from '../layout/login'
+import Voice from '../layout/voice/index'
 
 Vue.use(Router)
 
@@ -68,6 +69,12 @@ export default new Router({
             requireAuth: true,
           },
           component: SiteCreate
+        }, {
+          path: '/voice',
+          meta: {
+            requireAuth: true,
+          },
+          component: Voice
         }, {
           path: '*',
           meta: {

@@ -31,6 +31,14 @@
         <a-sub-menu
                 key="sub3"
         >
+          <span slot="title"><a-icon type="tool" /><span>工具</span></span>
+          <a-menu-item key="6">
+            <router-link to="/voice">语音合成</router-link>
+          </a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu
+                key="sub4"
+        >
           <span slot="title"><a-icon type="rocket"/><span>实验室</span></span>
           <a-menu-item key="1">
             <router-link to="/demo">通讯测试</router-link>
