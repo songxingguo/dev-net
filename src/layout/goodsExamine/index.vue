@@ -5,21 +5,8 @@
             :dataSource="data"
             bordered
             :rowKey='record => record.id'>
-      <div class="preview-image flex-row flex-space-around" slot="images" slot-scope="images">
-        <a-tooltip v-for="image in images"
-                   :key="image.id"
-                   placement="right"
-                   overlayClassName="tooltip--image"
-                   :mouseEnterDelay="0.3">
-          <template slot="title">
-            <img class="preview-image--ori"
-                 v-if="image.attributes.url"
-                 :src="image.attributes.url" alt="物品图片" />
-          </template>
-          <img class="preview-image--item preview-image--mini"
-               v-if="image.attributes.url"
-               :src="image.attributes.url" alt="物品图片" />
-        </a-tooltip>
+      <div class="flex-row flex-space-around" slot="images" slot-scope="images">
+        <PreviewImage :src="image.attributes.url" v-for="image in images" :key="image.id"/>
       </div>
       <template slot="state" slot-scope="text">
         <a v-if="text == 0">待审核</a>
@@ -30,10 +17,10 @@
         <div class='editable-row-operations'>
           <span v-if="record.isPassed == 0">
             <a-popconfirm
-                title='确认通过审核?'
-                okText="确认"
-                cancelText="取消"
-                @confirm="() => passExamine(record.id)">
+                    title='确认通过审核?'
+                    okText="确认"
+                    cancelText="取消"
+                    @confirm="() => passExamine(record.id)">
             <a>通过</a>
             </a-popconfirm>
             <a-divider type="vertical"/>
@@ -63,6 +50,8 @@
   @import './index.scss';
 </style>
 <script>
+  import PreviewImage from '../../components/preview-image/index'
+
   const columns = [{
     title: '标题',
     dataIndex: 'title',
@@ -85,7 +74,7 @@
     dataIndex: 'price',
     width: '10%',
     scopedSlots: {customRender: 'price'},
-  },  {
+  }, {
     title: '状态',
     dataIndex: 'isPassed',
     width: '10%',
@@ -138,7 +127,7 @@
         record: null
       }
     },
-    components: {CollectionCreateForm},
+    components: {PreviewImage, CollectionCreateForm},
     created () {
     },
     mounted () {
@@ -163,7 +152,7 @@
             return;
           }
           this.notPassExamine(record.id)
-          this.createNotice(Object.assign({...values},{...record}))
+          this.createNotice(Object.assign({...values}, {...record}))
           form.resetFields();
           this.visible = false;
         });

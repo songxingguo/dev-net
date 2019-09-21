@@ -1,14 +1,17 @@
 .preview-image {
   display: inline-block;
   .preview-image--item {
+    width: 50px;
+    height: 50px;
     cursor: pointer;
   }
   .preview-image--mini {
-    width: 75px;
+    width: inherit;
     border-radius: 6px;
   }
   & + .preview-image {
     margin-left: 8px;
+    margin-top: 5px;
   }
 }
 .preview-image--ori {

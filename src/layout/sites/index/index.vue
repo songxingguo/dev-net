@@ -11,9 +11,9 @@
       <template slot="desc" slot-scope="text">
         <tooltip :value="text"></tooltip>
       </template>
-      <template slot="images" slot-scope="record">
+      <div slot="images" slot-scope="record" class="flex-row flex-all-center flex-wrap">
         <preview-image v-for="(item, index) in record" :key="index" :src="item.url"/>
-      </template>
+      </div>
       <audio slot="audioUrl" slot-scope="text" :src="text" controls="controls" class="audio">
         您的浏览器不支持 audio 标签。
       </audio>
@@ -63,8 +63,8 @@
   }, {
     title: '图片',
     dataIndex: 'images',
-    scopedSlots: {customRender: 'images'},
     width: '20%',
+    scopedSlots: {customRender: 'images'},
   }, {
     title: '名称',
     dataIndex: 'audio.name',
@@ -79,7 +79,7 @@
   }, {
     title: '操作',
     dataIndex: 'operation',
-    width: '10%',
+    width: '25%',
     scopedSlots: {customRender: 'operation'},
   }];
   export default {
