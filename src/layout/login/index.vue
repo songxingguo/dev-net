@@ -65,7 +65,7 @@
 <script>
   import Auth from '../../model/auth'
   import {setAuthToken} from '../../utils/api'
-  
+
   export default {
     data () {
       return {
@@ -110,6 +110,8 @@
       },
       async login (e) {
         e.preventDefault();
+        const {access_token} = await Auth.getAccessToken()
+        setAuthToken(access_token)
         this.form.validateFields((err, {phone, captcha}) => {
           if (err) {
             return;
@@ -120,8 +122,6 @@
             this.$message.success('验证码错误', 1)
           });
         });
-        const {access_token} = await Auth.getAccessToken()
-        setAuthToken(access_token)
       },
     },
     computed: {},

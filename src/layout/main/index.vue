@@ -31,7 +31,7 @@
         <a-sub-menu
                 key="sub3"
         >
-          <span slot="title"><a-icon type="tool" /><span>工具</span></span>
+          <span slot="title"><a-icon type="tool"/><span>工具</span></span>
           <a-menu-item key="6">
             <router-link to="/voice">语音合成</router-link>
           </a-menu-item>
@@ -67,6 +67,8 @@
   @import './index.scss';
 </style>
 <script>
+  import {removeAuthToken} from '../../utils/api'
+
   export default {
     data () {
       return {
@@ -83,6 +85,7 @@
     methods: {
       logOut () {
         this.AV.User.logOut();
+        removeAuthToken()
         this.$router.push({path: '/login'})
       }
     },

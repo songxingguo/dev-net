@@ -80,7 +80,7 @@ export default new Router({
           meta: {
             requireAuth: true,
           },
-          component: GoodsTypeLayout
+          component: Sites
         }
       ]
     }]
