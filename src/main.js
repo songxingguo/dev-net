@@ -8,6 +8,7 @@ import './assets/style/base.scss'
 import router from './router'
 import axios from 'axios'
 import VueJsonp from 'vue-jsonp'
+import VueAxios from 'vue-axios'
 
 const {appId, appKey} = {
   appId: "hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz",
@@ -20,10 +21,9 @@ const realtime = new Realtime({
 });
 
 // 初始化 axios
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.baseURL = '/api'
-Vue.prototype.$axios = axios
-
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.baseURL = '/api'
+Vue.use(VueAxios, axios)
 
 // 初始化 AV
 AV.init(appId, appKey);

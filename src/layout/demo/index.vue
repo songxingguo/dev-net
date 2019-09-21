@@ -35,7 +35,7 @@
         .get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
         .then(response => (this.access_token = response.access_token))
       const ACCESS_TOKEN = '24_AxXmIR9ub2QqWVEV7iLHQ7HzBxEIHV9b9nMPsBkMT3r3ZAUAyATbLmZKeHVjoKkFL01V_HF2G1J-iFLa23OAgwivgiQGGny18g9c36GYsjg59AThQY9e0sSisDoM1qOILJTsgKbfoiqM2dAkVKYiACAZOC';
-      this.$axios({
+      this.axios({
         method: 'post',
         url: `https://api.weixin.qq.com/tcb/databasecollectionget?access_token=${ACCESS_TOKEN}`,
         data: this.$qs.stringify({

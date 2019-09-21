@@ -23,6 +23,14 @@ module.exports = {
         pathRewrite: {
           '^/foo': ''
         }
+      },
+      '/xfyun': {
+        target: 'https://api.xfyun.cn',//源地址
+        changeOrigin: true,//是否允许跨域
+        ws: true,//是否代理websockets
+        pathRewrite: {
+          '^/xfyun': ''
+        }
       }
     }
   }
