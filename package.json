@@ -52,6 +52,9 @@
       "autoprefixer": {}
     }
   },
+  "devBox": {
+    "minVersion": "1.1.6"
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",
