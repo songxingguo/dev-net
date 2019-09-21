@@ -49,7 +49,9 @@
     },
     mounted () {
     },
-    beforeDestroy () {
+    destroyed () {
+      this.audio.pause()
+      this.audio = null
     },
     methods: {
       async getVoice () {
