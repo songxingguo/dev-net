@@ -30,7 +30,7 @@
     },
     mounted () {
       const APPID = 'wx851ea7878ea99d18';
-      const APPSECRET = '8bda07146426aa95b9995940285e3a81'
+      const APPSECRET = '4c353cf5a856771ecfbc93bd1463e00f'
       this.$axios
         .get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
         .then(response => (this.access_token = response.access_token))
