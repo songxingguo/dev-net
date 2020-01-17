@@ -1,6 +1,6 @@
 const production = {
   apiUrlOfCloud: 'https://api.weixin.qq.com/foo',
-  apiBaseUrl: 'https://api.weixin.qq.com/api',
+  apiBaseUrl: 'https://net.songxingguo.workers.dev',
 }
 
 export default production
