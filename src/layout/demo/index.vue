@@ -28,22 +28,23 @@
     components: {},
     created () {
     },
-    mounted () {
-      const APPID = 'wx851ea7878ea99d18';
-      const APPSECRET = '4c353cf5a856771ecfbc93bd1463e00f'
-      this.$axios
-        .get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
-        .then(response => (this.access_token = response.access_token))
-      const ACCESS_TOKEN = '24_AxXmIR9ub2QqWVEV7iLHQ7HzBxEIHV9b9nMPsBkMT3r3ZAUAyATbLmZKeHVjoKkFL01V_HF2G1J-iFLa23OAgwivgiQGGny18g9c36GYsjg59AThQY9e0sSisDoM1qOILJTsgKbfoiqM2dAkVKYiACAZOC';
-      this.axios({
-        method: 'post',
-        url: `https://api.weixin.qq.com/tcb/databasecollectionget?access_token=${ACCESS_TOKEN}`,
-        data: this.$qs.stringify({
-          env: "visitingcqut-700544",
-          limit: 10,
-          offset: 0
-        })
-      }).then(response => (this.info = response))
+    async mounted () {
+      const {access_token} = await new Promise((resolve) => {
+        this.$axios
+          .get(`https://token.songxingguo.workers.dev`)
+          .then(response => {
+            resolve(response)
+          })
+      })
+      const {sites} = await new Promise((resolve) => {
+        this.$axios
+          .get(`https://sites.songxingguo.workers.dev?access_token=${access_token}`)
+          .then(response => {
+            resolve(response)
+          })
+      })
+      console.log(sites)
+      this.info = sites
     },
     beforeDestroy () {
     },
@@ -96,12 +97,15 @@
           });
         }).catch(console.error);
       },
-      getAccessToken () {
-        const APPID = 'wx851ea7878ea99d18';
-        const APPSECRET = '8bda07146426aa95b9995940285e3a81'
-        axios
-          .get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
-          .then(response => (this.access_token = response.access_token))
+      async getAccessToken () {
+        const {access_token} = await new Promise((resolve) => {
+          this.$axios
+            .get(`https://token.songxingguo.workers.dev`)
+            .then(response => {
+              resolve(response)
+            })
+        })
+        this.access_token = access_token
       }
     },
     computed: {},

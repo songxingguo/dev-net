@@ -6,6 +6,9 @@ export default class Sites {
     return Api.post('/tcb/databasequery', {
       "query": `db.collection('sites').limit(${pageSize}).skip(${(current - 1) * pageSize}).get()`
     }).then(({data: {data, pager}}) => {
+      if (!data) return {
+        data: []
+      }
       return {
         data: Promise.all(data.map(async item => {
           item = JSON.parse(item)
