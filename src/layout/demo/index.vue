@@ -31,14 +31,14 @@
     async mounted () {
       const {access_token} = await new Promise((resolve) => {
         this.$axios
-          .get(`https://token.songxingguo.workers.dev`)
+          .get(`https://wx.songxingguo.workers.dev/token`)
           .then(response => {
             resolve(response)
           })
       })
       const {sites} = await new Promise((resolve) => {
         this.$axios
-          .get(`https://sites.songxingguo.workers.dev?access_token=${access_token}`)
+          .get(`https://net.songxingguo.workers.dev/sites?access_token=${access_token}`)
           .then(response => {
             resolve(response)
           })
@@ -100,7 +100,7 @@
       async getAccessToken () {
         const {access_token} = await new Promise((resolve) => {
           this.$axios
-            .get(`https://token.songxingguo.workers.dev`)
+            .get(`https://wx.songxingguo.workers.dev/token`)
             .then(response => {
               resolve(response)
             })
