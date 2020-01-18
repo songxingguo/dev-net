@@ -111,7 +111,6 @@
           const {data, pagination} = await Sites.list(this.pagination)
           if (!data) return
           this.data = await data
-          console.log(this.data)
           this.pagination = pagination
         } catch (err) {
           console.error(err)
@@ -127,7 +126,7 @@
         try {
           await Sites.delete(id)
           this.$message.success('删除成功！')
-          this.loadSiteList()
+          this.loadData()
         } catch (err) {
           console.error(err)
         }

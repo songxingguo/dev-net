@@ -61,11 +61,11 @@ export function CreateApi ({baseURL, data}) {
     if (authToken) {
       config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
       config.params = {
-        'access_token': authToken
+        'token': authToken
       }
-      config.data = {
-        "env": "test-ptpuu"
-      }
+      // config.data = {
+      //   "env": "test-ptpuu"
+      // }
       // config.data = {
       //   "env": "visitingcqut-700544"
       // }

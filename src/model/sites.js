@@ -3,7 +3,7 @@ import Upload from '../model/upload'
 
 export default class Sites {
   static list ({current = 1, pageSize = 10}) {
-    return Api.post('/tcb/databasequery', {
+    return Api.post('/wx/query', {
       "query": `db.collection('sites').limit(${pageSize}).skip(${(current - 1) * pageSize}).get()`
     }).then(({data: {data, pager}}) => {
       if (!data) return {
@@ -49,7 +49,7 @@ export default class Sites {
   }
 
   static show (id) {
-    return Api.post(`/tcb/databasequery`, {
+    return Api.post(`/wx/query`, {
       "query": `db.collection("sites")
       .where({_id:${JSON.stringify(id)}}).get()`
     }).then(async ({data}) => {
@@ -72,14 +72,14 @@ export default class Sites {
   }
 
   static edit (id, record) {
-    return Api.post(`/tcb/databaseupdate`, {
+    return Api.post(`/wx/update`, {
       "query": `db.collection("sites").where({_id:${JSON.stringify(id)}})
       .update({data: ${this._formatData(record)}})`
     }).then(({data}) => data)
   }
 
   static create (record) {
-    return Api.post('/tcb/databaseadd', {
+    return Api.post('/wx/add', {
       "query": `db.collection('sites')
       .add({data: ${this._formatData(record)}})`
     }).then(({data}) => data)
@@ -97,7 +97,7 @@ export default class Sites {
   }
 
   static delete (id) {
-    return Api.post('/tcb/databasedelete', {
+    return Api.post('/wx/delete', {
       "query": `db.collection('sites').doc('${id}').remove()`
     }).then(({data}) => data)
   }

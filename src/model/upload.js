@@ -7,7 +7,7 @@ export default class Upload {
 
   static getDownloadUrl (filelist) {
     if (filelist.length == 0) return
-    return Api.post('tcb/batchdownloadfile', {file_list: this._getFileList(filelist)}).then(({data}) => {
+    return Api.post('wx/download', {file_list: this._getFileList(filelist)}).then(({data}) => {
       return data.file_list.map((item, index) => {
         const fileid = item.fileid
         return {
