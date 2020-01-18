@@ -82,24 +82,29 @@ export function CreateApi ({baseURL, data}) {
    * _response axios 的原生response对象
    */
   _axios.interceptors.response.use(function (response) {
-    // Do something with response data
-    let resData = response.data
-    // token 过期
-    if (resData.errcode === 40001 || resData.errcode == 42001) {
-      removeAuthToken()
-      window.$VueRouter.replace('/login')
+      // Do something with response data
+      let resData = response.data
+      // token 异常
+      if (resData.errcode == 42001 // AccessToken过期
+        || resData.errcode == 41001 // 缺少AccessToken
+        || resData.errcode == 40014) //AccessToken 不合法
+      {
+        removeAuthToken()
+        window.$VueRouter.replace('/login')
+      }
+      if (resData.success === false) return Promise.reject(new Error(resData.message || '逻辑异常'))
+      return {data: resData, _response: response}
+    },
+    function (error) {
+      // let {response} = error
+      // if (response.status === 401) {
+      //   window.$VueRouter.replace('/login')
+      // }
+      // Do something with response error
+      return Promise.reject(error)
     }
-    if (resData.success === false) return Promise.reject(new Error(resData.message || '逻辑异常'))
-    return {data: resData, _response: response}
-  }, function (error) {
-    // let {response} = error
-    // if (response.status === 401) {
-    //   window.$VueRouter.replace('/login')
-    // }
-    // Do something with response error
-    return Promise.reject(error)
-  })
-  // 拓展axios实例
+  )
+// 拓展axios实例
   extendAxios(_axios)
   return _axios
 }
