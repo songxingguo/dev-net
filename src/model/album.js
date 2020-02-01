@@ -3,8 +3,8 @@ import Api from '../../src/utils/api'
 const prefixUrl = 'https://net.songxingguo.workers.dev'
 
 export default class album {
-  static getImgs () {
-    return Api.get(`${prefixUrl}/album/imgs`).then(({data}) => data)
+  static getImgs (marker, limit) {
+    return Api.get(`${prefixUrl}/album/imgs?marker=${marker}&limit=${limit}`).then(({data}) => data)
   }
 
   static uploadToken () {
