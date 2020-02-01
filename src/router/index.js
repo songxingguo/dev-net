@@ -9,6 +9,7 @@ import Sites from '../layout/sites/index/index'
 import SiteCreate from '../layout/sites/create/index'
 import Login from '../layout/login'
 import Voice from '../layout/voice/index'
+import Album from '../layout/album/index'
 
 Vue.use(Router)
 
@@ -75,6 +76,12 @@ export default new Router({
             requireAuth: true,
           },
           component: Voice
+        }, {
+          path: '/album',
+          meta: {
+            requireAuth: true,
+          },
+          component: Album
         }, {
           path: '*',
           meta: {

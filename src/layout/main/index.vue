@@ -6,17 +6,13 @@
     >
       <div class="logo">临渊羡鱼，不如退而结网</div>
       <a-menu theme="dark" :defaultSelectedKeys="['1']" mode="inline">
-        <a-sub-menu
-                key="sub1"
-        >
+        <a-sub-menu key="sub1">
           <span slot="title"><a-icon type="notification"/><span>知晓理工</span></span>
           <a-menu-item key="5">
             <router-link to="/sites">地点</router-link>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu
-                key="sub2"
-        >
+        <a-sub-menu key="sub2">
           <span slot="title"><a-icon type="home"/><span>理工小铺</span></span>
           <a-menu-item key="2">
             <router-link to="/goodsType">类型管理</router-link>
@@ -28,17 +24,19 @@
             <router-link to="/isStudentExamine">实名审核</router-link>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu
-                key="sub3"
-        >
+        <a-sub-menu key="sub5">
+          <span slot="title"><a-icon type="tool"/><span>图片</span></span>
+          <a-menu-item key="7">
+            <router-link to="/album">相册</router-link>
+          </a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub3">
           <span slot="title"><a-icon type="tool"/><span>工具</span></span>
           <a-menu-item key="6">
             <router-link to="/voice">语音合成</router-link>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu
-                key="sub4"
-        >
+        <a-sub-menu key="sub4">
           <span slot="title"><a-icon type="rocket"/><span>实验室</span></span>
           <a-menu-item key="1">
             <router-link to="/demo">通讯测试</router-link>
