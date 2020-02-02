@@ -107,12 +107,13 @@
       async loadData () {
         try {
           const {marker: nMarker, pageSize} = this.pagination
-          const {marker, data} = await Album.getImgs(nMarker, pageSize)
+          const {marker, data} = await Album.getImgs('', pageSize)
           this.pagination.marker = marker
           this.imgList = data.map(item => {
-            const {address, grade = ''} = item
+            const {address, grade = '', url} = item
             return {
               ...item,
+              url: `${url}/watermark`,
               address: address.replace(/-/g, '·'),
               addressStr: address.replace(/-/g, '，'),
               grade,
