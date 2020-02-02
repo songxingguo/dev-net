@@ -78,6 +78,7 @@
 </style>
 <script>
   import Album from '../../model/album'
+  import moment from 'moment'
 
   export default {
     data () {
@@ -113,7 +114,7 @@
             return {
               ...item,
               address: address.replace(/-/g, '·'),
-              addressStr: address.replace(/-/g, ','),
+              addressStr: address.replace(/-/g, '，'),
               grade,
               visible: false
             }
@@ -123,9 +124,11 @@
         }
       },
       async edit (item) {
-        const {visible, addressStr, grade, key, prefix} = item
+        const {visible, addressStr, grade, key, prefix, url} = item
         if (visible) return
-        const deskey = `${prefix}${addressStr.replace(/,/g, '-')}_${grade}`
+        let {dateTime} = await Album.getImgExif(url)
+        dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
+        const deskey = `${prefix}${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`
         try {
           await Album.edit(key, deskey)
           this.$message.success('编辑成功', 1)

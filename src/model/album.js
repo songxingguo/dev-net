@@ -1,10 +1,27 @@
 import Api from '../../src/utils/api'
+import axios from 'axios'
 
 const prefixUrl = 'https://net.songxingguo.workers.dev'
+
+// Exif 实体
+function Exif ({DateTime, ExposureTime, FNumber, FocalLength, Model, ISOSpeedRatings} = {}) {
+  return {
+    dateTime: DateTime.val, // 拍摄时间
+    exposureTime: ExposureTime.val, // 快门时间
+    fNumber: FNumber.val, // 光圈大小
+    focalLength: FocalLength.val, // 焦距
+    model: Model.val, // 机型
+    ISO: ISOSpeedRatings.val, // ISO
+  }
+}
 
 export default class album {
   static getImgs (marker, limit) {
     return Api.get(`${prefixUrl}/album/imgs?marker=${marker}&limit=${limit}`).then(({data}) => data)
+  }
+
+  static getImgExif (imgUrl) {
+    return axios.get(`${imgUrl}?exif`).then(({data}) => Exif(data))
   }
 
   static uploadToken () {
