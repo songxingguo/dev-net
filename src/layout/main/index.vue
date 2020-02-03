@@ -25,7 +25,7 @@
           </a-menu-item>
         </a-sub-menu>
         <a-sub-menu key="sub5">
-          <span slot="title"><a-icon type="tool"/><span>图片</span></span>
+          <span slot="title"><a-icon type="coffee"/><span>图片</span></span>
           <a-menu-item key="7">
             <router-link to="/album">相册</router-link>
           </a-menu-item>
