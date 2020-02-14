@@ -16,8 +16,8 @@ function Exif ({DateTime, ExposureTime, FNumber, FocalLength, Model, ISOSpeedRat
 }
 
 export default class album {
-  static getImgs (marker, limit) {
-    return Api.get(`${prefixUrl}/album/imgs?marker=${marker}&limit=${limit}`).then(({data}) => data)
+  static getImgs ({prefix, marker = '', limit = 10} = {}) {
+    return Api.get(`${prefixUrl}/calbum/imgs?marker=${marker}&limit=${limit}&prefix=${prefix}`).then(({data}) => data)
   }
 
   static getImgExif (imgUrl) {
