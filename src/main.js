@@ -10,6 +10,7 @@ import axios from 'axios'
 import VueJsonp from 'vue-jsonp'
 import VueAxios from 'vue-axios'
 import _ from 'lodash'
+import moment from 'moment'
 
 const {appId, appKey} = {
   appId: "hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz",
@@ -33,6 +34,8 @@ Vue.prototype.realtime = realtime
 Vue.config.productionTip = false
 
 Vue.prototype._ = _  // 挂载 lodash
+
+Vue.prototype.moment = moment  // 挂载 moment
 
 // 引入 AntDesign
 Vue.use(Antd)

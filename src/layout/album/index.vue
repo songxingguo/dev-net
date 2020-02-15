@@ -71,15 +71,15 @@
           </span>
           <div style="width: 95%">
             <!-- 时间轴 -->
-            <a-timeline mode="right">
+            <a-timeline mode="right" v-for="imgObj in albumObj.imgList">
               <a-timeline-item>
                 <div slot="dot" class="flex-row" style="margin-left: 40px">
                   <a-icon type="clock-circle-o" style="font-size: 16px;"/>
-                  <span class="ml5">2019</span>
+                  <span class="ml5">{{imgObj.name}}</span>
                 </div>
                 <!-- 内容 -->
                 <a-row :gutter="16">
-                  <a-col :span="6" v-for="item in albumObj.imgList">
+                  <a-col :span="6" v-for="item in imgObj.list">
                     <a-card hoverable style="margin: 10px 0">
                       <img :alt="item.name"
                            :src="item.url"
@@ -250,16 +250,20 @@
         }
       },
       handleImg (data, prefix) {
-        return data.map(item => {
-          switch (prefix) {
-            case 'index':
+        switch (prefix) {
+          case 'index':
+            return data.map(item => {
               return this.handleIndex(item)
-            case 'album':
+            })
+          case 'album':
+            return this.chunkList(data.map(item => {
               return this.handleAlbum(item)
-            case 'canon':
+            }))
+          case 'canon':
+            return data.map(item => {
               return this.handleCanon(item)
-          }
-        })
+            })
+        }
       },
       handleIndex (item) {
         const {address, grade = '', url} = item
@@ -299,7 +303,17 @@
         }
       },
       chunkList (imgList) {
-
+        if (!Array.isArray(imgList)) return
+        const form = 2019
+        const to = this.moment().years()
+        const cImgList = []
+        for (let i = form; i <= to; i++) {
+          const imgArr = imgList.filter(({key}) => key.includes(i))
+          if (imgArr.length !== 0) {
+            cImgList.push({name: i, list: imgArr})
+          }
+        }
+        return cImgList
       },
       async edit (item) {
         const {visible, key} = item
