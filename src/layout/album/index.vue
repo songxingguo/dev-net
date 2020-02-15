@@ -280,7 +280,7 @@
         const uploadToken = await Album.uploadToken()
         this.data = {
           token: uploadToken,
-          key: `album/${uid}_${name}`,
+          key: `canon/${name}`,
         }
       },
       handleChange (info) {
