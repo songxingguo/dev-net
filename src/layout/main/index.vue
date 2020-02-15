@@ -40,6 +40,9 @@
           <a-menu-item key="1">
             <router-link to="/demo">通讯测试</router-link>
           </a-menu-item>
+          <a-menu-item key="8">
+            <router-link to="/md2json">md2json</router-link>
+          </a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>

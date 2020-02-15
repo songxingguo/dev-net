@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import MainLayout from '../layout/main'
 import DemoLayout from '../layout/demo'
+import MD2JSON from '../layout/md2json'
 import GoodsTypeLayout from '../layout/goodsType'
 import GoodsExamineLayout from '../layout/goodsExamine'
 import IsStudentExamine from '../layout/isStudentExamine'
@@ -33,6 +34,13 @@ export default new Router({
             requireAuth: true,
           },
           component: DemoLayout
+        },
+        {
+          path: '/md2json',
+          meta: {
+            requireAuth: true,
+          },
+          component: MD2JSON
         },
         {
           path: '/goodsType',
