@@ -36,10 +36,7 @@
                     <div slot="content">
                       <a-form>
                         <a-form-item>
-                          <a-input placeholder="地址" v-model="item.addressStr"/>
-                        </a-form-item>
-                        <a-form-item>
-                          <a-input placeholder="评级" v-model="item.grade"/>
+                          <a-input placeholder="名称" v-model="item.addressStr"/>
                         </a-form-item>
                       </a-form>
                     </div>
@@ -135,21 +132,8 @@
                      :src="item.url"
                      slot="cover"/>
                 <template class="ant-card-actions" slot="actions">
-                  <a-popover trigger="click"
-                             v-model="item.visible"
-                             @visibleChange="() => edit(item)">
-                    <div slot="content">
-                      <a-form>
-                        <a-form-item>
-                          <a-input placeholder="地址" v-model="item.addressStr"/>
-                        </a-form-item>
-                        <a-form-item>
-                          <a-input placeholder="评级" v-model="item.grade"/>
-                        </a-form-item>
-                      </a-form>
-                    </div>
-                    <a-icon type="edit"/>
-                  </a-popover>
+                  <a-icon type="apple" @click="onIndex(item)"/>
+                  <a-icon type="instagram" @click="onAlbum(item)"/>
                   <a-popconfirm
                           title='确认要删除?'
                           okText="确认"
@@ -157,18 +141,6 @@
                           @confirm="() => deleteItem(item.key)">
                     <a-icon type="delete"/>
                   </a-popconfirm>
-                  <a-popover trigger="click"
-                             v-model="item.eVisible">
-                    <div slot="content">
-                      <p>
-                        <a-button block @click="onIndex(item)">首页</a-button>
-                      </p>
-                      <p>
-                        <a-button block @click="onAlbum(item)">相册</a-button>
-                      </p>
-                    </div>
-                    <a-icon type="ellipsis"/>
-                  </a-popover>
                 </template>
                 <a-card-meta>
                   <template slot="title">
