@@ -181,6 +181,7 @@
         </a-tab-pane>
       </a-tabs>
     </div>
+    <div @click="loadData">加载更多</div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -208,19 +209,22 @@
             name: '精选',
             key: 'index',
             icon: 'apple',
-            imgList: []
+            imgList: [],
+            data: []
           },
           {
             name: '相册',
             key: 'album',
             icon: 'instagram',
-            imgList: []
+            imgList: [],
+            data: []
           },
           {
             name: '相机',
             key: 'canon',
             icon: 'chrome',
-            imgList: []
+            imgList: [],
+            data: []
           },
         ]
       }
@@ -236,15 +240,19 @@
     methods: {
       handleTabChange (activeKey) {
         this.prefix = activeKey
-        this.loadData(activeKey)
+        this.loadData()
       },
-      async loadData (prefix = 'index') {
+      async loadData () {
         try {
           const {marker: nMarker, pageSize} = this.pagination
-          const {marker, data} = await Album.getImgs({prefix, pageSize})
+          const {prefix} = this
+          const {marker, data} = await Album.getImgs({prefix, pageSize, marker: nMarker})
           this.pagination.marker = marker
-          const imgList = this.handleImg(data, prefix)
+          let allData = this.tabList.find(({key}) => key === prefix).data
+          allData.push(...data)
+          const imgList = this.handleImg(allData, prefix)
           this.tabList.find(({key}) => key === prefix).imgList = imgList
+          this.tabList.find(({key}) => key === prefix).data = allData
         } catch (err) {
           console.error(err)
         }
@@ -307,7 +315,7 @@
         const form = 2019
         const to = this.moment().years()
         const cImgList = []
-        for (let i = form; i <= to; i++) {
+        for (let i = to; i >= form; i--) {
           const imgArr = imgList.filter(({key}) => key.includes(i))
           if (imgArr.length !== 0) {
             cImgList.push({name: i, list: imgArr})
