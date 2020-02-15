@@ -16,10 +16,58 @@
       <!-- 标签页 -->
       <a-tabs defaultActiveKey="index"
               @change="handleTabChange">
-        <a-tab-pane v-for="tab in tabList" :key="tab.key">
+        <!-- 首页 -->
+        <a-tab-pane :key="indexObj.key">
           <span slot="tab">
-            <a-icon :type="tab.icon"/>
-            {{tab.name}}
+            <a-icon :type="indexObj.icon"/>
+            {{indexObj.name}}
+          </span>
+          <!-- 内容 -->
+          <a-row :gutter="16">
+            <a-col :span="6" v-for="item in indexObj.imgList">
+              <a-card hoverable style="margin: 10px 0">
+                <img :alt="item.name"
+                     :src="item.url"
+                     slot="cover"/>
+                <template class="ant-card-actions" slot="actions">
+                  <a-popover trigger="click"
+                             v-model="item.visible"
+                             @visibleChange="() => edit(item)">
+                    <div slot="content">
+                      <a-form>
+                        <a-form-item>
+                          <a-input placeholder="地址" v-model="item.addressStr"/>
+                        </a-form-item>
+                        <a-form-item>
+                          <a-input placeholder="评级" v-model="item.grade"/>
+                        </a-form-item>
+                      </a-form>
+                    </div>
+                    <a-icon type="edit"/>
+                  </a-popover>
+                  <a-popconfirm
+                          title='确认要删除?'
+                          okText="确认"
+                          cancelText="取消"
+                          @confirm="() => deleteItem(item.key)">
+                    <a-icon type="delete"/>
+                  </a-popconfirm>
+                  <a-icon type="ellipsis" @click="ellipsis"/>
+                </template>
+                <a-card-meta>
+                  <template slot="title">
+                    {{item.address}}
+                  </template>
+                </a-card-meta>
+              </a-card>
+            </a-col>
+          </a-row>
+        </a-tab-pane>
+        <!-- 相册 -->
+        <a-tab-pane :key="albumObj.key">
+          <span slot="tab">
+            <a-icon :type="albumObj.icon"/>
+            {{albumObj.name}}
           </span>
           <div style="width: 95%">
             <!-- 时间轴 -->
@@ -31,7 +79,7 @@
                 </div>
                 <!-- 内容 -->
                 <a-row :gutter="16">
-                  <a-col :span="6" v-for="item in tab.imgList">
+                  <a-col :span="6" v-for="item in albumObj.imgList">
                     <a-card hoverable style="margin: 10px 0">
                       <img :alt="item.name"
                            :src="item.url"
@@ -59,23 +107,7 @@
                                 @confirm="() => deleteItem(item.key)">
                           <a-icon type="delete"/>
                         </a-popconfirm>
-                        <div v-if="tab.key==='canon'">
-                          <a-popover trigger="click"
-                                     v-model="item.eVisible">
-                            <div slot="content">
-                              <p>
-                                <a-button block @click="onIndex(item)">首页</a-button>
-                              </p>
-                              <p>
-                                <a-button block @click="onAlbum(item)">相册</a-button>
-                              </p>
-                            </div>
-                            <a-icon type="ellipsis"/>
-                          </a-popover>
-                        </div>
-                        <div v-else>
-                          <a-icon type="ellipsis" @click="ellipsis"/>
-                        </div>
+                        <a-icon type="ellipsis" @click="ellipsis"/>
                       </template>
                       <a-card-meta>
                         <template slot="title">
@@ -88,6 +120,64 @@
               </a-timeline-item>
             </a-timeline>
           </div>
+        </a-tab-pane>
+        <!-- 相机 -->
+        <a-tab-pane :key="canonObj.key">
+          <span slot="tab">
+            <a-icon :type="canonObj.icon"/>
+            {{canonObj.name}}
+          </span>
+          <!-- 内容 -->
+          <a-row :gutter="16">
+            <a-col :span="6" v-for="item in canonObj.imgList">
+              <a-card hoverable style="margin: 10px 0">
+                <img :alt="item.name"
+                     :src="item.url"
+                     slot="cover"/>
+                <template class="ant-card-actions" slot="actions">
+                  <a-popover trigger="click"
+                             v-model="item.visible"
+                             @visibleChange="() => edit(item)">
+                    <div slot="content">
+                      <a-form>
+                        <a-form-item>
+                          <a-input placeholder="地址" v-model="item.addressStr"/>
+                        </a-form-item>
+                        <a-form-item>
+                          <a-input placeholder="评级" v-model="item.grade"/>
+                        </a-form-item>
+                      </a-form>
+                    </div>
+                    <a-icon type="edit"/>
+                  </a-popover>
+                  <a-popconfirm
+                          title='确认要删除?'
+                          okText="确认"
+                          cancelText="取消"
+                          @confirm="() => deleteItem(item.key)">
+                    <a-icon type="delete"/>
+                  </a-popconfirm>
+                  <a-popover trigger="click"
+                             v-model="item.eVisible">
+                    <div slot="content">
+                      <p>
+                        <a-button block @click="onIndex(item)">首页</a-button>
+                      </p>
+                      <p>
+                        <a-button block @click="onAlbum(item)">相册</a-button>
+                      </p>
+                    </div>
+                    <a-icon type="ellipsis"/>
+                  </a-popover>
+                </template>
+                <a-card-meta>
+                  <template slot="title">
+                    {{item.address}}
+                  </template>
+                </a-card-meta>
+              </a-card>
+            </a-col>
+          </a-row>
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -301,7 +391,17 @@
         this.loadData()
       },
     },
-    computed: {},
+    computed: {
+      indexObj () {
+        return this.tabList[0]
+      },
+      albumObj () {
+        return this.tabList[1]
+      },
+      canonObj () {
+        return this.tabList[2]
+      },
+    },
     watch: {}
   }
 </script>
