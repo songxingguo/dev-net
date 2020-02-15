@@ -33,10 +33,9 @@
                 <a-row :gutter="16">
                   <a-col :span="6" v-for="item in tab.imgList">
                     <a-card hoverable style="margin: 10px 0">
-                      <img
-                              :alt="item.name"
-                              :src="item.url"
-                              slot="cover"/>
+                      <img :alt="item.name"
+                           :src="item.url"
+                           slot="cover"/>
                       <template class="ant-card-actions" slot="actions">
                         <a-popover trigger="click"
                                    v-model="item.visible"
@@ -208,6 +207,9 @@
           visible: false,
           eVisible: false
         }
+      },
+      chunkList (imgList) {
+
       },
       async edit (item) {
         const {visible, key} = item

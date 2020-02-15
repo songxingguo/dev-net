@@ -9,6 +9,7 @@ import router from './router'
 import axios from 'axios'
 import VueJsonp from 'vue-jsonp'
 import VueAxios from 'vue-axios'
+import _ from 'lodash'
 
 const {appId, appKey} = {
   appId: "hJlVtqYMU2inTJ6WDsLruwRm-gzGzoHsz",
@@ -30,6 +31,8 @@ AV.init(appId, appKey);
 Vue.prototype.AV = AV  // 将初始化后的 AV 挂载到 Vue 上
 Vue.prototype.realtime = realtime
 Vue.config.productionTip = false
+
+Vue.prototype._ = _  // 挂载 lodash
 
 // 引入 AntDesign
 Vue.use(Antd)
