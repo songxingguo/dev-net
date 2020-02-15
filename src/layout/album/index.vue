@@ -97,6 +97,7 @@
                           </div>
                           <a-icon type="edit"/>
                         </a-popover>
+                        <a-icon :type="item.locked?'lock':'unlock'" @click="toggleLock(item)"/>
                         <a-popconfirm
                                 title='确认要删除?'
                                 okText="确认"
@@ -104,7 +105,6 @@
                                 @confirm="() => deleteItem(item.key)">
                           <a-icon type="delete"/>
                         </a-popconfirm>
-                        <a-icon type="ellipsis" @click="ellipsis"/>
                       </template>
                       <a-card-meta>
                         <template slot="title">
@@ -278,8 +278,7 @@
           address: address.replace(/-/g, '·'),
           addressStr: address.replace(/-/g, '，'),
           grade,
-          visible: false,
-          eVisible: false
+          visible: false
         }
       },
       chunkList (imgList) {
@@ -294,6 +293,19 @@
           }
         }
         return cImgList
+      },
+      async toggleLock (item) {
+        const {locked, key} = item
+        let arr = key.split('_')
+        arr.splice(3, 1, `${locked ? 0 : 1}`)
+        const desKey = arr.join('_')
+        try {
+          await Album.edit(key, desKey)
+          this.$message.success(`${locked ? '解锁成功' : '上锁成功'}`, 1)
+          this.loadData()
+        } catch (err) {
+          console.error(err)
+        }
       },
       async edit (item) {
         const {visible, key} = item
