@@ -2,9 +2,8 @@
   <a-layout id="components-layout-demo-side" style="min-height: 100vh">
     <a-layout-sider
             collapsible
-            v-model="collapsed"
-    >
-      <div class="logo">临渊羡鱼，不如退而结网</div>
+            v-model="collapsed">
+      <div class="logo">{{name}}</div>
       <a-menu theme="dark" :defaultSelectedKeys="['1']" mode="inline">
         <a-sub-menu key="sub1">
           <span slot="title"><a-icon type="notification"/><span>知晓理工</span></span>
@@ -87,7 +86,11 @@
         this.$router.push({path: '/login'})
       }
     },
-    computed: {},
+    computed: {
+      name () {
+        return this.collapsed ? '结网' : '临渊羡鱼，不如退而结网'
+      }
+    },
     watch: {}
   }
 </script>
