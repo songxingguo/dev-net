@@ -60,7 +60,23 @@
                                 @confirm="() => deleteItem(item.key)">
                           <a-icon type="delete"/>
                         </a-popconfirm>
-                        <a-icon type="ellipsis" @click="ellipsis"/>
+                        <div v-if="tab.key==='canon'">
+                          <a-popover trigger="click"
+                                     v-model="item.eVisible">
+                            <div slot="content">
+                              <p>
+                                <a-button block @click="onIndex(item)">首页</a-button>
+                              </p>
+                              <p>
+                                <a-button block @click="onAlbum(item)">相册</a-button>
+                              </p>
+                            </div>
+                            <a-icon type="ellipsis"/>
+                          </a-popover>
+                        </div>
+                        <div v-else>
+                          <a-icon type="ellipsis" @click="ellipsis"/>
+                        </div>
                       </template>
                       <a-card-meta>
                         <template slot="title">
@@ -72,22 +88,6 @@
                 </a-row>
               </a-timeline-item>
             </a-timeline>
-            <template v-if="!isEmpty">
-              <!-- 分页 -->
-              <a-pagination
-                      :pageSizeOptions="pagination.pageSizeOptions"
-                      :total="pagination.total"
-                      showSizeChanger
-                      :pageSize="pagination.pageSize"
-                      v-model="pagination.current"
-                      @showSizeChange="onShowSizeChange"
-                      @change="onChange">
-                <template slot="buildOptionText" slot-scope="props">
-                  <span v-if="props.value!=='50'">{{props.value}}条/页</span>
-                  <span v-if="props.value==='50'">全部</span>
-                </template>
-              </a-pagination>
-            </template>
           </div>
         </a-tab-pane>
       </a-tabs>
@@ -168,7 +168,7 @@
             case 'album':
               return this.handleAlbum(item)
             case 'canon':
-              return this.handleAlbum(item)
+              return this.handleCanon(item)
           }
         })
       },
@@ -176,6 +176,7 @@
         const {address, grade = '', url} = item
         return {
           ...item,
+          name: '',
           url: `${url}/watermark`,
           address: address.replace(/-/g, '·'),
           addressStr: address.replace(/-/g, '，'),
@@ -187,6 +188,7 @@
         const {address, grade = '', url} = item
         return {
           ...item,
+          name: '',
           url: `${url}/watermark`,
           address: address.replace(/-/g, '·'),
           addressStr: address.replace(/-/g, '，'),
@@ -194,8 +196,21 @@
           visible: false
         }
       },
+      handleCanon (item) {
+        const {address, grade = '', url} = item
+        return {
+          ...item,
+          name: '',
+          url: `${url}/watermark`,
+          address: address.replace(/-/g, '·'),
+          addressStr: address.replace(/-/g, '，'),
+          grade,
+          visible: false,
+          eVisible: false
+        }
+      },
       async edit (item) {
-        const {visible, key,} = item
+        const {visible, key} = item
         if (visible) return
         try {
           await Album.edit(key, await this.genDesKey(item))
@@ -209,21 +224,21 @@
         const {prefix, key} = item
         switch (prefix) {
           case 'index':
-            return this.genIndexDesKey(item)
+            return this.genIndexDesKey(item, prefix)
           case 'album':
-            return this.genAlbumDesKey(item)
+            return this.genAlbumDesKey(item, prefix)
           case 'canon':
             return key
         }
       },
-      async genIndexDesKey (item) {
-        const {addressStr, grade, prefix, url} = item
+      async genIndexDesKey (item, prefix) {
+        const {addressStr, grade, url} = item
         let {dateTime} = await Album.getImgExif(url)
         dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
         return `${prefix}/${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`
       },
-      async genAlbumDesKey (item) {
-        const {addressStr, grade, prefix, url} = item
+      async genAlbumDesKey (item, prefix) {
+        const {addressStr, grade, url} = item
         let {dateTime} = await Album.getImgExif(url)
         dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
         return `${prefix}/${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`
@@ -239,6 +254,26 @@
       },
       ellipsis () {
         this.$message.info('功能正在开发中', 1)
+      },
+      async onIndex (item) {
+        const {key} = item
+        try {
+          await Album.copy(key, await this.genIndexDesKey(item, 'index'))
+          this.$message.success('拷贝成功', 1)
+          this.loadData()
+        } catch (err) {
+          console.error(err)
+        }
+      },
+      async onAlbum (item) {
+        const {key} = item
+        try {
+          await Album.copy(key, await this.genAlbumDesKey(item, 'album'))
+          this.$message.success('拷贝成功', 1)
+          this.loadData()
+        } catch (err) {
+          console.error(err)
+        }
       },
       async beforeUpload (file) {
         const {uid, name} = file
@@ -264,11 +299,7 @@
         this.loadData()
       },
     },
-    computed: {
-      isEmpty () {
-        return true
-      }
-    },
+    computed: {},
     watch: {}
   }
 </script>

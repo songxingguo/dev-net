@@ -32,6 +32,10 @@ export default class album {
     return Api.get(`${prefixUrl}/album/edit?key=${key}&deskey=${deskey}`).then(({data}) => data)
   }
 
+  static copy (key, deskey) {
+    return Api.get(`${prefixUrl}/album/copy?key=${key}&deskey=${deskey}`).then(({data}) => data)
+  }
+
   static delete (key) {
     return Api.get(`${prefixUrl}/album/delete?key=${key}`).then(({data}) => data)
   }
