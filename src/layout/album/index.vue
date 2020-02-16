@@ -26,9 +26,20 @@
           <a-row :gutter="16">
             <a-col :span="6" v-for="item in indexObj.imgList">
               <a-card hoverable style="margin: 10px 0">
-                <img :alt="item.name"
-                     :src="item.url"
-                     slot="cover"/>
+                <a-popover trigger="hover"
+                           arrowPointAtCenter
+                           placement="top"
+                           overlayClassName="img-box"
+                           slot="cover">
+                  <template slot="content">
+                    <img :alt="item.name"
+                         :src="item.url"
+                         slot="cover"
+                         class="preview-img"/>
+                  </template>
+                  <img :alt="item.name"
+                       :src="item.url"/>
+                </a-popover>
                 <template class="ant-card-actions" slot="actions">
                   <a-popover trigger="click"
                              v-model="item.visible"
@@ -78,9 +89,20 @@
                 <a-row :gutter="16">
                   <a-col :span="6" v-for="item in imgObj.list">
                     <a-card hoverable style="margin: 10px 0">
-                      <img :alt="item.name"
-                           :src="item.url"
-                           slot="cover"/>
+                      <a-popover trigger="hover"
+                                 arrowPointAtCenter
+                                 placement="top"
+                                 overlayClassName="img-box"
+                                 slot="cover">
+                        <template slot="content">
+                          <img :alt="item.name"
+                               :src="item.url"
+                               slot="cover"
+                               class="preview-img"/>
+                        </template>
+                        <img :alt="item.name"
+                             :src="item.url"/>
+                      </a-popover>
                       <template class="ant-card-actions" slot="actions">
                         <a-popover trigger="click"
                                    v-model="item.visible"
@@ -128,9 +150,20 @@
           <a-row :gutter="16">
             <a-col :span="6" v-for="item in canonObj.imgList">
               <a-card hoverable style="margin: 10px 0">
-                <img :alt="item.name"
-                     :src="item.url"
-                     slot="cover"/>
+                <a-popover trigger="hover"
+                           arrowPointAtCenter
+                           placement="top"
+                           overlayClassName="img-box"
+                           slot="cover">
+                  <template slot="content">
+                    <img :alt="item.name"
+                         :src="item.url"
+                         slot="cover"
+                         class="preview-img"/>
+                  </template>
+                  <img :alt="item.name"
+                       :src="item.url"/>
+                </a-popover>
                 <template class="ant-card-actions" slot="actions">
                   <a-icon type="apple" @click="onIndex(item)"/>
                   <a-icon type="instagram" @click="onAlbum(item)"/>
