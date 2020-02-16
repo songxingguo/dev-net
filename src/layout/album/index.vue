@@ -203,11 +203,12 @@
   import Album from '../../model/album'
   import moment from 'moment'
 
-  function pagination ({marker = '', spinning = false, isNoMore = false} = {}) {
+  function pagination ({marker = '', spinning = false, isNoMore = false, limit = 50} = {}) {
     return {
       marker,
       spinning,
-      isNoMore
+      isNoMore,
+      limit
     }
   }
 
@@ -240,13 +241,13 @@
             name: '相册',
             key: 'album',
             icon: 'instagram',
-            pagination: pagination()
+            pagination: pagination({limit: 100})
           }),
           TabItem({
             name: '相机',
             key: 'canon',
             icon: 'chrome',
-            pagination: pagination()
+            pagination: pagination({limit: 500})
           }),
         ]
       }
@@ -285,11 +286,11 @@
       async loadData () {
         try {
           const {spinning} = this
-          const {marker: nMarker, pageSize, isNoMore} = this.curPagination
+          const {marker: nMarker, limit, isNoMore} = this.curPagination
           if (spinning || isNoMore) return
           this.curPagination.spinning = true
           const {prefix} = this
-          const {marker, data} = await Album.getImgs({prefix, pageSize, marker: nMarker})
+          const {marker, data} = await Album.getImgs({prefix, limit, marker: nMarker})
           let allData = this.curTab.data
           allData.push(...data)
           const imgList = this.handleImg(allData, prefix)
