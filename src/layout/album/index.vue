@@ -153,7 +153,14 @@
         </a-tab-pane>
       </a-tabs>
     </div>
-    <div @click="loadData">加载更多</div>
+    <!-- 加载更多 -->
+    <div style="text-align: center;">
+      <a-spin :spinning="curPagination.spinning">
+        <a-button type="link" @click="loadData"
+                  v-if="!curPagination.isNoMore&&!curPagination.spinning">加载更多
+        </a-button>
+      </a-spin>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -163,41 +170,51 @@
   import Album from '../../model/album'
   import moment from 'moment'
 
+  function pagination ({marker = '', spinning = false, isNoMore = false} = {}) {
+    return {
+      marker,
+      spinning,
+      isNoMore
+    }
+  }
+
+  function TabItem ({name = '', key = '', icon = '', imgList = [], data = [], pagination = {}} = {}) {
+    return {
+      name,
+      key,
+      icon,
+      imgList,
+      data,
+      pagination,
+    }
+  }
+
   export default {
     data () {
       return {
         fileInfo: {},
         data: {},
-        pagination: {
-          pageSizeOptions: ['10', '20', '30', '40', '50'],
-          current: 1,
-          pageSize: 10,
-          total: 50,
-          marker: ''
-        },
+        spinning: false,
         prefix: 'index',
         tabList: [
-          {
+          TabItem({
             name: '精选',
             key: 'index',
             icon: 'apple',
-            imgList: [],
-            data: []
-          },
-          {
+            pagination: pagination()
+          }),
+          TabItem({
             name: '相册',
             key: 'album',
             icon: 'instagram',
-            imgList: [],
-            data: []
-          },
-          {
+            pagination: pagination()
+          }),
+          TabItem({
             name: '相机',
             key: 'canon',
             icon: 'chrome',
-            imgList: [],
-            data: []
-          },
+            pagination: pagination()
+          }),
         ]
       }
     },
@@ -212,19 +229,42 @@
     methods: {
       handleTabChange (activeKey) {
         this.prefix = activeKey
+        if (this.curTab.imgList.length !== 0) return
         this.loadData()
+      },
+      refreshData ({key, newItem, prefix}) {
+        prefix = prefix ? prefix : this.prefix
+        const allData = this.tabList.find(({key}) => key === prefix).data
+        if (key) {
+          const index = allData.findIndex((item) => item.key === key)
+          if (newItem) {
+            allData.splice(index, 1, newItem)
+          } else {
+            allData.splice(index, 1)
+          }
+        } else {
+          allData.unshift(newItem)
+        }
+        const imgList = this.handleImg(allData, prefix)
+        this.tabList.find(({key}) => key === prefix).imgList = imgList
+        this.tabList.find(({key}) => key === prefix).data = allData
       },
       async loadData () {
         try {
-          const {marker: nMarker, pageSize} = this.pagination
+          const {spinning} = this
+          const {marker: nMarker, pageSize, isNoMore} = this.curPagination
+          if (spinning || isNoMore) return
+          this.curPagination.spinning = true
           const {prefix} = this
           const {marker, data} = await Album.getImgs({prefix, pageSize, marker: nMarker})
-          this.pagination.marker = marker
-          let allData = this.tabList.find(({key}) => key === prefix).data
+          let allData = this.curTab.data
           allData.push(...data)
           const imgList = this.handleImg(allData, prefix)
-          this.tabList.find(({key}) => key === prefix).imgList = imgList
-          this.tabList.find(({key}) => key === prefix).data = allData
+          this.curTab.imgList = imgList
+          this.curTab.data = allData
+          this.curPagination.marker = marker
+          this.curPagination.spinning = false
+          if (!marker) this.curPagination.isNoMore = true
         } catch (err) {
           console.error(err)
         }
@@ -295,37 +335,40 @@
         return cImgList
       },
       async toggleLock (item) {
-        const {locked, key} = item
+        const {locked, key, url} = item
         const arr = key.split('/')
         const prefix = arr[0]
         const name = arr[arr.length - 1]
-        const desKey = [prefix, `${locked ? 0 : 1}`, name].join('/')
+        const desKey = [prefix, `${!locked ? 1 : 0}`, name].join('/')
         try {
           await Album.edit(key, desKey)
           this.$message.success(`${locked ? '解锁成功' : '上锁成功'}`, 1)
-          this.loadData()
+          this.refreshData({key, newItem: {...item, url: url.replace('/watermark', ''), locked: !locked}})
         } catch (err) {
           console.error(err)
         }
       },
       async edit (item) {
-        const {visible, key} = item
+        const {visible, key, url, addressStr} = item
         if (visible) return
         try {
           await Album.edit(key, await this.genDesKey(item))
           this.$message.success('编辑成功', 1)
-          this.loadData()
+          this.refreshData({
+            key,
+            newItem: {...item, url: url.replace('/watermark', ''), address: addressStr.replace('，', '·')}
+          })
         } catch (err) {
           console.error(err)
         }
       },
       genDesKey (item) {
-        const {prefix, key} = item
+        let {prefix, key} = item
         switch (prefix) {
           case 'index':
             return this.genIndexDesKey(item, prefix)
           case 'album':
-            return this.genAlbumDesKey(item)
+            return this.genAlbumDesKey(item, prefix)
           case 'canon':
             return key
         }
@@ -336,19 +379,17 @@
         dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
         return `${prefix}/${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`
       },
-      async genAlbumDesKey (item) {
-        const {addressStr, grade, url, key} = item
+      async genAlbumDesKey (item, prefix) {
+        const {addressStr, grade, url, locked} = item
         let {dateTime} = await Album.getImgExif(url)
         dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
-        const arr = key.split('/')
-        const prefix = arr[0]
-        return [prefix, `${true ? 0 : 1}`, `${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`].join('/')
+        return [prefix, `${locked ? 1 : 0}`, `${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`].join('/')
       },
       async deleteItem (key) {
         try {
           await Album.delete(key)
           this.$message.success('删除成功', 1)
-          this.loadData()
+          this.refreshData({key})
         } catch (err) {
           console.error(err)
         }
@@ -357,21 +398,25 @@
         this.$message.info('功能正在开发中', 1)
       },
       async onIndex (item) {
-        const {key} = item
         try {
-          await Album.copy(key, await this.genIndexDesKey(item, 'index'))
+          const {key, url} = item
+          const prefix = 'index'
+          const desKey = await this.genIndexDesKey(item, prefix)
+          await Album.copy(key, desKey)
           this.$message.success('拷贝成功', 1)
-          this.loadData()
+          this.refreshData({prefix, newItem: {...item, url: url.replace('/watermark', ''), key: desKey}})
         } catch (err) {
           console.error(err)
         }
       },
       async onAlbum (item) {
-        const {key} = item
         try {
-          await Album.copy(key, await this.genAlbumDesKey(item, 'album'))
+          const {key, url} = item
+          const prefix = 'album'
+          const desKey = await this.genAlbumDesKey(item, prefix)
+          await Album.copy(key, desKey)
           this.$message.success('拷贝成功', 1)
-          this.loadData()
+          this.refreshData({prefix, newItem: {...item, url: url.replace('/watermark', ''), key: desKey}})
         } catch (err) {
           console.error(err)
         }
@@ -392,13 +437,6 @@
           this.$message.error(`${info.file.name} 上传失败`);
         }
       },
-      onChange (page, pageSize) {
-
-      },
-      onShowSizeChange (current, pageSize) {
-        this.pagination.pageSize = pageSize
-        this.loadData()
-      },
     },
     computed: {
       indexObj () {
@@ -410,6 +448,24 @@
       canonObj () {
         return this.tabList[2]
       },
+      curTab: {
+        get: function () {
+          return this.tabList.find(({key}) => key === this.prefix)
+        },
+        set: function (value) {
+          const index = this.tabList.findIndex(({key}) => key === this.prefix)
+          this.tabList[index] = value
+        }
+      },
+      curPagination: {
+        get: function () {
+          return this.tabList.find(({key}) => key === this.prefix).pagination
+        },
+        set: function (value) {
+          const index = this.tabList.findIndex(({key}) => key === this.prefix)
+          this.tabList[index].pagination = value
+        }
+      }
     },
     watch: {}
   }
