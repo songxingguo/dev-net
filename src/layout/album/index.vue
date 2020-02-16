@@ -296,9 +296,10 @@
       },
       async toggleLock (item) {
         const {locked, key} = item
-        let arr = key.split('_')
-        arr.splice(3, 1, `${locked ? 0 : 1}`)
-        const desKey = arr.join('_')
+        const arr = key.split('/')
+        const prefix = arr[0]
+        const name = arr[arr.length - 1]
+        const desKey = [prefix, `${locked ? 0 : 1}`, name].join('/')
         try {
           await Album.edit(key, desKey)
           this.$message.success(`${locked ? '解锁成功' : '上锁成功'}`, 1)
@@ -324,7 +325,7 @@
           case 'index':
             return this.genIndexDesKey(item, prefix)
           case 'album':
-            return this.genAlbumDesKey(item, prefix)
+            return this.genAlbumDesKey(item)
           case 'canon':
             return key
         }
@@ -335,11 +336,13 @@
         dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
         return `${prefix}/${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`
       },
-      async genAlbumDesKey (item, prefix) {
-        const {addressStr, grade, url} = item
+      async genAlbumDesKey (item) {
+        const {addressStr, grade, url, key} = item
         let {dateTime} = await Album.getImgExif(url)
         dateTime = moment(dateTime, 'YYYY:MM:DD HH:mm:ss').format('YYYYMMDDHHmm')
-        return `${prefix}/${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`
+        const arr = key.split('/')
+        const prefix = arr[0]
+        return [prefix, `${true ? 0 : 1}`, `${dateTime}_${addressStr.replace(/，/g, '-')}_${grade}`].join('/')
       },
       async deleteItem (key) {
         try {
