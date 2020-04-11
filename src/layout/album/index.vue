@@ -6,6 +6,7 @@
             action="https://up.qiniup.com"
             :beforeUpload="beforeUpload"
             :data="data"
+            :multiple="true"
             @change="handleChange">
       <a-button>
         <a-icon type="upload"/>
