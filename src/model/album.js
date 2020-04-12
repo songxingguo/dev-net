@@ -39,4 +39,19 @@ export default class album {
   static delete (key) {
     return Api.get(`${prefixUrl}/album/delete?key=${key}`).then(({data}) => data)
   }
+
+  static check (key) {
+    return Api.get(`${prefixUrl}/album/check?key=${key}`).then(({data}) => data)
+  }
+
+  static batchCheck (keys = []) {
+    return Api.post(`${prefixUrl}/album/batchCheck`, {keys}).then(({data}) => data)
+  }
+
+  static async upload (formData) {
+    const uploadUrl = 'https://up.qiniup.com'
+    return axios.post(uploadUrl, formData, {
+      headers: {'Content-Type': 'multipart/form-data"'}
+    }).then(({data}) => data)
+  }
 }

@@ -6,13 +6,26 @@
             action="https://up.qiniup.com"
             :beforeUpload="beforeUpload"
             :data="data"
+            :fileList="fileList"
+            :remove="handleRemove"
             :multiple="true"
+            :showUploadList="false"
             @change="handleChange">
-      <a-button>
-        <a-icon type="upload"/>
-        上传
+      <a-button :disabled="loading || uploading"
+                :loading="loading">
+        <a-icon type="upload" v-if="!loading"/>
+        {{loading?'加载中':'选择'}}
       </a-button>
     </a-upload>
+    <a-button
+            type="primary"
+            @click="handleUpload"
+            :disabled="fileList.length === 0"
+            :loading="uploading"
+            style="margin-top: 16px;margin-left: 10px"
+    >
+      {{ uploading ? '上传中' : '开始上传' }}
+    </a-button>
     <div class="content-area">
       <!-- 标签页 -->
       <a-tabs defaultActiveKey="index"
@@ -203,6 +216,7 @@
 <script>
   import Album from '../../model/album'
   import moment from 'moment'
+  import EXIF from 'exif-js'
 
   function pagination ({marker = '', spinning = false, isNoMore = false, limit = 50} = {}) {
     return {
@@ -250,13 +264,17 @@
             icon: 'chrome',
             pagination: pagination({limit: 500})
           }),
-        ]
+        ],
+        uploadToken: '',
+        fileList: [],
+        uploading: false,
+        loading: false
       }
     },
     components: {},
-    async created () {
+    created () {
     },
-    mounted () {
+    async mounted () {
       this.loadData()
     },
     destroyed () {
@@ -456,22 +474,48 @@
           console.error(err)
         }
       },
-      async beforeUpload (file) {
-        const {uid, name} = file
-        const uploadToken = await Album.uploadToken()
-        this.data = {
-          token: uploadToken,
-          key: `canon/${name}`,
+      beforeUpload (file) {
+        this.fileList = [...this.fileList, file]
+        this.loading = true
+        return false
+      },
+      async handleUpload () {
+        try {
+          const {fileList} = this
+          const allKeys = fileList.map(item => `canon/${item.name}`)
+          const {keys} = await Album.batchCheck(allKeys)
+          this.loading = false
+          this.uploading = true
+          const token = await Album.uploadToken()
+          const uFileList = fileList.filter(item => keys.findIndex(key => key == `canon/${item.name}`) >= 0)
+          await Promise.all(uFileList.map(file => {
+            const {name} = file
+            const formData = new FormData()
+            formData.append('file', file)
+            formData.append('token', token)
+            formData.append('key', `canon/${name}`)
+            return Album.upload(formData)
+          }))
+          this.fileList = []
+          this.uploading = false
+          this.$message.success(`${uFileList.length}个图片上传成功`)
+        } catch ({message}) {
+          this.uploading = false
         }
       },
       handleChange (info) {
         if (info.file.status === 'done') {
           this.$message.success(`${info.file.name} 上传成功`);
-          this.loadData()
         } else if (info.file.status === 'error') {
           this.$message.error(`${info.file.name} 上传失败`);
         }
       },
+      handleRemove (file) {
+        const index = this.fileList.indexOf(file);
+        const newFileList = this.fileList.slice();
+        newFileList.splice(index, 1);
+        this.fileList = newFileList;
+      }
     },
     computed: {
       indexObj () {
