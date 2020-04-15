@@ -368,8 +368,8 @@
           ...item,
           name: '',
           url: `${url}/watermark`,
-          address: address.replace(/-/g, '·'),
-          addressStr: address.replace(/-/g, '，'),
+          address: address,
+          addressStr: address,
           grade,
           visible: false
         }
