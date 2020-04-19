@@ -367,7 +367,7 @@
         return {
           ...item,
           name: '',
-          url: `${url}/watermark`,
+          url: `${url}/mobile`,
           address: address,
           addressStr: address,
           grade,
@@ -454,10 +454,10 @@
         try {
           const {key, url} = item
           const prefix = 'index'
-          const desKey = await this.genIndexDesKey(item, prefix)
+          const desKey = await this.genIndexDesKey({...item, url: url.replace('/mobile', '/watermark')}, prefix)
           await Album.copy(key, desKey)
           this.$message.success('拷贝成功', 1)
-          this.refreshData({prefix, newItem: {...item, url: url.replace('/watermark', ''), key: desKey}})
+          this.refreshData({prefix, newItem: {...item, url: url.replace('/mobile', ''), key: desKey}})
         } catch (err) {
           console.error(err)
         }
@@ -466,10 +466,10 @@
         try {
           const {key, url} = item
           const prefix = 'album'
-          const desKey = await this.genAlbumDesKey(item, prefix)
+          const desKey = await this.genAlbumDesKey({...item, url: url.replace('/mobile', '/watermark')}, prefix)
           await Album.copy(key, desKey)
           this.$message.success('拷贝成功', 1)
-          this.refreshData({prefix, newItem: {...item, url: url.replace('/watermark', ''), key: desKey}})
+          this.refreshData({prefix, newItem: {...item, url: url.replace('/mobile', ''), key: desKey}})
         } catch (err) {
           console.error(err)
         }
