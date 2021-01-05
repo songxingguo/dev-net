@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^1.4.10",
-    "axios": "^0.19.1",
+    "axios": "^0.21.1",
     "core-js": "^2.6.11",
     "exif-js": "^2.3.0",
     "js-base64": "^2.5.1",
